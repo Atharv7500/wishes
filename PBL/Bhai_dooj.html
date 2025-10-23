@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Lovely Sister</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FBF8F3;
+            color: #4A4A4A;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .font-dancing {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Base card for each screen */
+        .screen-card {
+            background-color: white;
+            border-radius: 1.5rem; /* 24px */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px; /* Mobile-first approach */
+            padding: 2rem; /* 32px */
+            border: 1px solid #F0EAE4;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* Main screen container */
+        .main-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        /* Navigation buttons */
+        .nav-button {
+            position: fixed;
+            bottom: 2rem; /* 32px */
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 50;
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #prev-btn {
+            left: 2rem; /* 32px */
+            background-color: #A5B4FC; /* Light blue */
+        }
+        
+        #prev-btn:hover {
+             background-color: #818CF8;
+        }
+
+        #next-btn {
+            right: 2rem; /* 32px */
+            background-color: #F472B6; /* Pink */
+        }
+        
+        #next-btn:hover {
+             background-color: #EC4899;
+        }
+        
+        /* Hide buttons on first and last screen */
+        .nav-button.hidden {
+            display: none;
+        }
+
+        /* Screen-specific styles */
+        
+        /* Screen 1: Welcome */
+        .welcome-header {
+            font-size: 0.875rem; /* 14px */
+            color: #9A9A9A;
+            letter-spacing: 0.1em;
+        }
+        .welcome-title {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 700;
+            color: #333;
+            position: relative;
+            display: inline-block;
+        }
+        .welcome-title .sparkle {
+            position: absolute;
+            color: #F472B6;
+            font-size: 1rem;
+            animation: sparkle 1.5s infinite;
+        }
+        .sparkle-1 { top: -10px; left: -15px; animation-delay: 0s; }
+        .sparkle-2 { top: 0; right: -20px; animation-delay: 0.5s; }
+        .sparkle-3 { bottom: -5px; right: -10px; animation-delay: 1s; }
+        
+        .happy-text {
+            font-size: 4.5rem; /* 72px */
+            color: #F472B6;
+            line-height: 1;
+            margin-top: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .dear-sis {
+            font-size: 2.5rem; /* 40px */
+            font-weight: 700;
+            color: #333;
+            margin-top: -1rem;
+        }
+        
+        /* Screen 2: Letter */
+        .letter-card {
+            width: 100%;
+            padding: 2rem;
+            border: 1px solid #F0EAE4;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            position: relative;
+        }
+        .letter-body {
+            font-size: 1.125rem; /* 18px */
+            color: #555;
+            line-height: 1.6;
+            min-height: 150px; /* Space for typing */
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+        .letter-body::after {
+            content: '▌';
+            animation: blink 1s step-end infinite;
+            color: #F472B6;
+        }
+        .letter-body.typing-done::after {
+            content: '';
+            animation: none;
+        }
+        
+        /* Screen 3: Music Player */
+        .music-player {
+            width: 100%;
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+        .album-art {
+            width: 180px;
+            height: 180px;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.2);
+            overflow: hidden;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #F0EAE4;
+            border-radius: 3px;
+            margin-top: 1.5rem;
+            cursor: pointer;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #F472B6;
+            border-radius: 3px;
+        }
+        .music-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .control-btn {
+            background-color: #FBF8F3;
+            border-radius: 50%;
+            width: 3.5rem; /* 56px */
+            height: 3.5rem; /* 56px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F472B6;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        .control-btn:hover {
+            background-color: #F7F1EB;
+            transform: scale(1.05);
+        }
+        .control-btn.play {
+            width: 4.5rem; /* 72px */
+            height: 4.5rem; /* 72px */
+            background-color: #F472B6;
+            color: white;
+        }
+        .control-btn.play:hover {
+            background-color: #EC4899;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Main Container for all screens -->
+    <div class="main-container">
+
+        <!-- Screen 1: Welcome -->
+        <div id="screen-0" class="screen-card" style="display: flex;">
+            <p class="welcome-header">FOR MY LOVELY</p>
+            <h1 class="welcome-title">
+                SISTER
+                <span class="sparkle sparkle-1">✦</span>
+                <span class="sparkle sparkle-2">✨</span>
+                <span class="sparkle sparkle-3">✧</span>
+            </h1>
+            <h2 class="font-dancing happy-text">Happy Bhai Dooj</h2>
+            <h3 class="dear-sis">DEAR SIS</h3>
+            <p class="mt-4 text-gray-600">
+                You've always been my biggest supporter, my secret keeper, and my forever partner-in-crime 😜.This little website is just a small token to show you how much you mean to me.
+            </p>
+            <!-- ★ EDIT IMAGE HERE ★ -->
+            <!-- Just replace the 'src' link with your new image link -->
+            <img src="https://png.pngtree.com/png-clipart/20230104/original/pngtree-happy-bhai-dooj-indian-festival-celebration-hand-drawn-cartoon-illustration-of-png-image_8867195.png" alt="Brother and Sister" class="rounded-lg mt-6 w-48 h-48 object-cover"
+            onerror="this.src='https://placehold.co/200x200/FBF8F3/F472B6?text=Image+Error'">
+        </div>
+        
+        <!-- Screen 2: Letter (Was Screen 3) -->
+        <div id="screen-1" class="screen-card">
+             
+            <p class="welcome-header">A LETTER</p>
+            <h2 class="text-3xl font-bold" style="color: #DB2777;">FROM YOUR BHAI ✦</h2>
+            
+            <div class="letter-card mt-6">
+            
+                
+                <p class="text-xl font-bold" style="color: #555;">Dear Sis ❤️,</p>
+                <p id="letter-text" class="letter-body"></p>
+                <p class="text-right mt-6 text-lg font-semibold" style="color: #444;">— With love, your brother ❤️💎</p>
+            </div>
+        </div>
+
+        <!-- Screen 3: Music (Was Screen 5) -->
+        <div id="screen-2" class="screen-card">
+            <h2 class="text-3xl font-bold" style="color: #DB2777;">A Few Songs For You ❤️</h2>
+            
+            <div class="music-player mt-6">
+                <!-- This image will be changed automatically by the JavaScript -->
+                <img id="album-art" src="https://placehold.co/180x180/F0EAE4/F472B6?text=Song+1" alt="Album Art" class="album-art"
+                onerror="this.src='https://placehold.co/180x180/F0EAE4/F472B6?text=Error'">
+                
+                <p id="song-status" class="text-sm text-gray-500 mt-6">PAUSED</p>
+                <p id="song-title" class="text-2xl font-bold mt-1">Phoolo Ka Taaron Ka</p>
+                
+                <div class="progress-bar-container">
+                    <div id="progress-bar"></div>
+                </div>
+                
+                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+                
+                <div class="music-controls">
+                    <button class="control-btn" id="prev-song">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                          <path fill-rule="evenodd" d="M19.5 18a.75.75 0 00.75-.75V6.75a.75.75 0 00-1.5 0v9.75c0 .414.336.75.75.75zM4.5 18a.75.75 0 00.75-.75V6.75a.75.75 0 00-1.5 0v9.75c0 .414.336.75.75.75zM6.75 18A.75.75 0 007.5 17.25V6.75a.75.75 0 00-1.5 0v9.75c0 .414.336.75.75.75zm10.5 0a.75.75 0 00.75-.75V6.75a.75.75 0 00-1.5 0v9.75c0 .414.336.75.75.75z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <button class="control-btn play" id="play-pause-btn">
+                        <!-- Play Icon -->
+                        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+                          <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- Pause Icon (hidden) -->
+                        <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="display: none;">
+                          <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75V5.25z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="next-song">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                          <path fill-rule="evenodd" d="M4.5 18a.75.75 0 01-.75-.75V6.75a.75.75 0 011.5 0v9.75c0 .414-.336.75-.75.75zM19.5 18a.75.75 0 01-.75-.75V6.75a.75.75 0 011.5 0v9.75c0 .414-.336.75-.75.75zM17.25 18a.75.75 0 01-.75-.75V6.75a.75.75 0 011.5 0v9.75c0 .414-.336.75-.75.75zm-10.5 0a.75.75 0 01-.75-.75V6.75a.75.75 0 011.5 0v9.75c0 .414-.336.75-.75.75z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- ★ AUDIO HTML REMOVED ★ -->
+                <!-- You no longer need to edit audio tags here! -->
+                <!-- All song editing is done in the JavaScript section below -->
+
+            </div>
+        </div>
+        
+        <!-- Screen 4: Thank You (Was Screen 6) -->
+        <div id="screen-3" class="screen-card">
+            <p class="welcome-header">FROM YOUR BHAI, WITH LOVE</p>
+            <h2 class="text-4xl font-bold mt-2" style="color: #333;">Thank You</h2>
+            <h3 class="text-2xl font-bold mt-1" style="color: #EC4899;">FOR ALWAYS BEING THERE</h3>
+            
+            <p class="mt-6 text-lg text-gray-600">
+                On this Bhai Dooj, I'm not just praying for your long life and happiness—I'm also thanking my lucky stars that I got you as my sister. My wish for you is simple: I wish you all the joy in the world, all the success you work so hard for, and all the love you deserve. Always remember that no matter where life takes us, I am always here for you, cheering you on from the sidelines.
+            </p>
+            
+            <!-- ★ EDIT IMAGE HERE ★ -->
+            <!-- This is the final "waving" cartoon -->
+            <img src="https://png.pngtree.com/png-clipart/20230609/original/pngtree-thank-you-text-decorated-by-floral-ornaments-picture-image_8538603.png" alt="Thank You" class="mt-6 w-36 h-36"
+            onerror="this.src='https://placehold.co/150x150/FFFFFF/F472B6?text=Error'">
+            
+            <p class="mt-8 text-sm text-gray-500">
+                made with ❤️, chocolates & sparkles — always your bhai
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Navigation Buttons -->
+    <button id="prev-btn" class="nav-button hidden">← Back</button>
+    <button id="next-btn" class="nav-button">Next →</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentScreen = 0;
+            const totalScreens = 4;
+            const screens = document.querySelectorAll('.screen-card');
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+
+            // --- Screen Management ---
+            function showScreen(screenIndex) {
+                screens.forEach(screen => {
+                    screen.style.display = 'none';
+                });
+                
+                const screenToShow = document.getElementById(`screen-${screenIndex}`);
+                if (screenToShow) {
+                    screenToShow.style.display = 'flex';
+                }
+
+                if (screenIndex === 0) {
+                    prevBtn.classList.add('hidden');
+                    nextBtn.classList.remove('hidden');
+                } else if (screenIndex === totalScreens - 1) {
+                    prevBtn.classList.remove('hidden');
+                    nextBtn.classList.add('hidden');
+                } else {
+                    prevBtn.classList.remove('hidden');
+                    nextBtn.classList.remove('hidden');
+                }
+                
+                // --- Screen-Specific Logic ---
+                if (screenIndex === 1) {
+                    startTyping();
+                }
+                
+                if (screenIndex === 2) {
+                    initializePlayer();
+                } else {
+                    pauseSong();
+                }
+            }
+            
+            window.nextScreen = () => {
+                if (currentScreen < totalScreens - 1) {
+                    currentScreen++;
+                    showScreen(currentScreen);
+                }
+            }
+
+            window.prevScreen = () => {
+                if (currentScreen > 0) {
+                    currentScreen--;
+                    showScreen(currentScreen);
+                }
+            }
+            
+            nextBtn.addEventListener('click', nextScreen);
+            prevBtn.addEventListener('click', prevScreen);
+            
+            // --- Screen 2: Letter Typing Logic ---
+            const letterTextEl = document.getElementById('letter-text');
+            const letterContent = "I just want to remind you how special you are to me. May your life shine as bright as your smile, and may chocolates always find their way to you. 💎";
+            let charIndex = 0;
+            let typingInterval;
+
+            function typeLetter() {
+                if (charIndex < letterContent.length) {
+                    letterTextEl.textContent += letterContent.charAt(charIndex);
+                    charIndex++;
+                } else {
+                    clearInterval(typingInterval);
+                    letterTextEl.classList.add('typing-done');
+                }
+            }
+
+            function startTyping() {
+                charIndex = 0;
+                letterTextEl.textContent = '';
+                letterTextEl.classList.remove('typing-done');
+                clearInterval(typingInterval);
+                typingInterval = setInterval(typeLetter, 50);
+            }
+            
+            // --- Screen 3: Music Player Logic (MODIFIED) ---
+            
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // ★★★ THIS IS THE ONLY PLACE TO ADD OR CHANGE SONGS ★★★
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            //
+            // Add your songs to this list.
+            // 1. Find a direct .mp3 link (e.g., from archive.org or by uploading your own).
+            // 2. Find an image link for the art.
+            // 3. Add a new object { ... } to the list below.
+            
+            const songs = [
+              { 
+                title: "Phoolo Ka Taaron Ka", // The song title to display
+                art: "https://img.freepik.com/premium-photo/cartoon-brother-sister-raksha-bandhan-design-concept-4k-highresolution-photo_1193781-1347.jpg", // The album art image link
+                src: "C://Users//athar//Downloads//phoolon ka taroon.mp3" // The .mp3 song link
+              },
+              { 
+                title: "Dhaagon Se Baandha", 
+                art: "https://png.pngtree.com/png-clipart/20230104/original/pngtree-happy-bhai-dooj-indian-festival-celebration-hand-drawn-cartoon-illustration-of-png-image_8867195.png", 
+                src: "C://Users//athar//Downloads//dhagon se bandha.mp3"
+              },
+             
+              // Add your next song here by copying the format:
+              // { title: "My New Song", art: "image-link.jpg", src: "song-link.mp3" },
+            ];
+            
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // (No need to edit below this line)
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+            let currentSongIndex = 0;
+            let isPlaying = false;
+            let progressInterval;
+            
+            // This array will hold the audio objects
+            let audioElements = [];
+            let currentAudio = null; // This will be the currently active audio object
+
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const nextSongBtn = document.getElementById('next-song');
+            const prevSongBtn = document.getElementById('prev-song');
+            
+            const songStatusEl = document.getElementById('song-status');
+            const songTitleEl = document.getElementById('song-title');
+            const albumArtEl = document.getElementById('album-art');
+            const currentTimeEl = document.getElementById('current-time');
+            const totalTimeEl = document.getElementById('total-time');
+            const progressBar = document.getElementById('progress-bar');
+            
+            function formatTime(seconds) {
+                const min = Math.floor(seconds / 60);
+                const sec = Math.floor(seconds % 60);
+                return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            }
+
+            function loadSong(index) {
+                const song = songs[index];
+                if (!song) return; 
+                
+                currentAudio = audioElements[index];
+                if (!currentAudio) return;
+
+                songTitleEl.textContent = song.title;
+                albumArtEl.src = song.art;
+                albumArtEl.onerror = () => { albumArtEl.src = 'https://placehold.co/180x180/F0EAE4/333?text=Error'; };
+                
+                // Stop all other songs
+                audioElements.forEach((audio, i) => {
+                    if (i !== index && audio) { 
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                });
+                
+                if (currentAudio.duration && !isNaN(currentAudio.duration)) {
+                    totalTimeEl.textContent = formatTime(currentAudio.duration);
+                } else {
+                    totalTimeEl.textContent = "0:00"; 
+                }
+                currentTimeEl.textContent = formatTime(0);
+                progressBar.style.width = '0%';
+            }
+            
+            function playSong() {
+                if (!currentAudio) return; 
+                
+                currentAudio.play().catch(e => console.error("Error playing audio:", e));
+                isPlaying = true;
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                songStatusEl.textContent = 'NOW PLAYING ♫';
+                clearInterval(progressInterval);
+                progressInterval = setInterval(updateProgress, 100);
+            }
+
+            function pauseSong() {
+                if (currentAudio) {
+                    currentAudio.pause();
+                }
+                
+                isPlaying = false;
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                songStatusEl.textContent = 'PAUSED';
+                clearInterval(progressInterval);
+            }
+            
+            function updateProgress() {
+                if (currentAudio && currentAudio.duration) { 
+                    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
+                    currentTimeEl.textContent = formatTime(currentAudio.currentTime);
+                }
+            }
+
+            function togglePlayPause() {
+                if (!currentAudio) return; 
+                if (currentAudio.paused) {
+                    playSong();
+                } else {
+                    pauseSong();
+                }
+            }
+            
+            function nextSong() {
+                pauseSong();
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                loadSong(currentSongIndex);
+                playSong();
+            }
+
+            function prevSong() {
+                pauseSong();
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                loadSong(currentSongIndex);
+                playSong();
+            }
+            
+            function initializePlayer() {
+                if (!window.playerInitialized) {
+                    playPauseBtn.addEventListener('click', togglePlayPause);
+                    nextSongBtn.addEventListener('click', nextSong);
+                    prevSongBtn.addEventListener('click', prevSong);
+
+                    // NEW: Create Audio objects from the 'songs' array
+                    songs.forEach((song, index) => {
+                        const audio = new Audio(song.src);
+                        audio.preload = "auto";
+                        
+                        audio.addEventListener('ended', nextSong);
+                        audio.addEventListener('loadedmetadata', () => {
+                            if (index === currentSongIndex) {
+                                totalTimeEl.textContent = formatTime(audio.duration);
+                            }
+                        });
+                        audioElements.push(audio); // Add the new audio object to our array
+                    });
+
+                    loadSong(currentSongIndex); // Load the first song
+                    window.playerInitialized = true;
+                }
+            }
+
+            // --- Initial Load ---
+            showScreen(0);
+        });
+    </script>
+</body>
+</html>
+
